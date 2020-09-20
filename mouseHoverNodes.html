@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+rect{
+  fill: grey;
+}
+
+circle {
+  stroke: #000;
+  fill: steelblue;
+  stroke-opacity: .5;
+}
+
+</style>
+<body style="background:url('background.jpg');">
+  <h1>MOUSE HOVERED RANDOM NODES</h1>
+  <div align="center"></div>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script>
+
+var width = 960,
+    height = 500;
+
+var nodes = d3.range(5).map(function(i) {
+  return {
+    type: Math.random() * 5 | 0,
+    radius: 60,
+    fixed: true,
+    type: i,
+    x: (i + 1) * (width / 6),
+    y: height / 2
+  };
+});
+
+
+
+var svg = d3.select("div").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .on("mousemove", mousemoved);
+
+svg.append("rect")
+    .attr("width", width)
+    .attr("height", height);
+
+svg.selectAll("circle")
+    .data(nodes)
+  .enter().append("circle")
+    .attr("r", function(d) { return d.radius - 2; })
+    .style("fill", function(d) { return color(d.type); });
+
+var p0;
+
+
+
+function mousemoved() {
+  var p1 = d3.mouse(this);
+  p0 = p1;
+
+  var node = {
+    radius: Math.random() * 20 + 4,
+    type: Math.random() * 5 | 0,
+    x: p1[0],
+    y: p1[1],
+    px: (p0 || (p0 = p1))[0],
+    py: p0[1]
+  };
+
+  svg.append("circle")
+      .data([node])
+      .attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; })
+      .attr("r", function(d) { return d.radius - 2; })
+      .style("fill", function(d) { return color(d.type); })
+    .transition()
+      .delay(3000)
+      .attr("r", 1e-6)
+      .each("end", function() { nodes.splice(6, 1); })
+      .remove();
+
+  nodes.push(node);
+}
+
+
+
+
+</script>
